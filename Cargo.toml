@@ -1,0 +1,33 @@
+[package]
+name = "timely-defuse"
+version = "0.1.0"
+authors = ["Eduardo Pinho <enet4mikeenet@gmail.com>"]
+edition = "2021"
+
+[dependencies]
+rand = "0.8.5"
+rand_distr = "0.4.2"
+rand_pcg = "0.3.1"
+getrandom = { version = "0.2", features = ["js"] }
+
+[target.'cfg(target_arch = "wasm32")'.dependencies."web-sys"]
+version = "0.3.60"
+features = ["AudioContext"]
+
+[dependencies.bevy]
+version = "0.9"
+features = ["wav"]
+
+[dependencies.bevy_ecs_tilemap]
+version = "0.9"
+features = ["atlas"]
+
+[profile.dev.package."*"]
+opt-level = 's'
+
+[profile.dev]
+opt-level = 1
+
+[profile.release]
+opt-level = 'z'
+lto = "thin"
