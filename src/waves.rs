@@ -17,7 +17,7 @@ use crate::{
     helper::ScheduledEvent,
     ingame::{Wave, WaveUi},
     menu::NORMAL_BUTTON,
-    movement::SpatialPosition,
+    movement::{SpatialPosition, Velocity},
     scores::{spawn_stats, GameScores},
     spawner::{PendingThrow, RandomEventProducer, Spawner, SpawnerCooldown},
     DefaultFont,
@@ -184,7 +184,7 @@ pub fn on_next_wave(
     font: Res<DefaultFont>,
     mut event_reader: EventReader<NextWaveEvent>,
     mut query_wave_ui: Query<&mut Text, With<WaveUi>>,
-    query_guy: Query<&mut GuyState>,
+    query_guy: Query<(&mut GuyState, &mut Velocity)>,
     query_wave_finished: Query<Entity, With<WaveFinished>>,
 ) {
     if let Some(_) = event_reader.iter().next() {
@@ -218,9 +218,10 @@ fn spawn_game_over(
     commands: &mut Commands,
     scores: Res<GameScores>,
     font: Res<DefaultFont>,
-    mut query_guy: Query<&mut GuyState>,
+    mut query_guy: Query<(&mut GuyState, &mut Velocity)>,
 ) {
-    if let Ok(mut guy_state) = query_guy.get_single_mut() {
+    if let Ok((mut guy_state, mut guy_velocity)) = query_guy.get_single_mut() {
+        guy_velocity.0 = Vec2::new(0., 0.);
         match scores.score {
             -99_999..=99 => {
                 *guy_state = GuyState::Ouch;
