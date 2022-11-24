@@ -139,7 +139,7 @@ fn main() {
                 .with_system(spawner::throw_bomb)
                 .with_system(spawner::throw_dynamite)
                 .with_system(spawner::throw_coffee)
-                .with_system(waves::detect_wave_finish.before(guy::walk_to_destination))
+                .with_system(waves::detect_wave_finish.after(guy::walk_to_destination))
                 .with_system(waves::change_background_per_wave.before(waves::on_next_wave))
                 .with_system(waves::on_next_wave.after(waves::detect_wave_finish))
                 .with_system(ingame::button_system),
