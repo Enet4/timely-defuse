@@ -187,7 +187,7 @@ fn random_xy_position(rng: &mut Rng) -> Vec2 {
 }
 
 fn random_velocity_variations(rng: &mut Rng) -> Vec3 {
-    let vel_variations_dist = rand_distr::Uniform::new(-2., 2.);
+    let vel_variations_dist = rand_distr::Uniform::new(-12., 12.);
     let vel_x = rng.0.sample(vel_variations_dist);
     let vel_y = rng.0.sample(vel_variations_dist);
     let vel_variations_z_dist = rand_distr::Uniform::new(-20., 0.);
