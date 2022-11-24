@@ -102,14 +102,14 @@ pub fn spawn_game_score_ui(commands: &mut Commands, font: Handle<Font>) -> Entit
         },
     )
     // Set the alignment of the Text
-    .with_text_alignment(TextAlignment::CENTER_LEFT)
+    .with_text_alignment(TextAlignment::CENTER_RIGHT)
     // Set the style of the TextBundle itself.
     .with_style(Style {
         align_self: AlignSelf::FlexEnd,
         position_type: PositionType::Absolute,
         position: UiRect {
-            top: Val::Px(6.0),
-            right: Val::Px(80.0),
+            top: Val::Px(8.0),
+            right: Val::Px(16.0),
             ..default()
         },
         ..default()

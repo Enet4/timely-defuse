@@ -69,8 +69,8 @@ pub fn setup(
             align_self: AlignSelf::FlexEnd,
             position_type: PositionType::Absolute,
             position: UiRect {
-                top: Val::Px(4.),
-                left: Val::Px(8.),
+                top: Val::Px(8.),
+                left: Val::Px(12.),
                 ..default()
             },
             ..default()
