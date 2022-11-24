@@ -222,14 +222,16 @@ fn spawn_game_over(
 ) {
     if let Ok((guy_entity, mut guy_state, mut guy_velocity)) = query_guy.get_single_mut() {
         match scores.score {
-            -99_999..=99 => {
+            -999_999..=199 => {
                 *guy_state = GuyState::Ouch;
             }
-            100..=99_999 => {
+            200..=999_999 => {
                 *guy_state = GuyState::Victorious;
             }
-            _ => { /* no-op */ }
-        }
+            _ => {
+                /* no-op */
+                warn!("... What!?");
+            }
         }
         // stop moving
         guy_velocity.0 = Vec3::new(0., 0., 0.);
