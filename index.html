@@ -59,7 +59,7 @@
 
 <body><span id="init-loader">Loading...</span></body>
 <script type="module">
-  import init from './target/timely-defuse.js'
+  import init from './timely-defuse.js'
   init().catch((e) => {
     if (!e.message.startsWith("Using exceptions for control flow")) {
       console.error(e);
