@@ -25,7 +25,7 @@ pub struct ProgressBarOuterMesh;
 #[derive(Default, Component)]
 pub struct ProgressBarInnerMesh;
 
-const PROGRESS_BAR_W: f32 = 38.;
+const PROGRESS_BAR_W: f32 = 30.;
 const PROGRESS_BAR_H: f32 = 6.;
 
 pub fn spawn_progress_bar(
