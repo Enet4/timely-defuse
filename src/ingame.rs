@@ -155,6 +155,8 @@ pub fn touch_set_destination(
     for touch in touches.iter_just_pressed() {
         if let Ok((mut destination, base_translation)) = query.get_single_mut() {
             destination.0 = touch.position() - base_translation.0;
+            // clamp to floor
+            destination.0.y = destination.0.y.min(490.);
         }
     }
 }
@@ -169,6 +171,8 @@ pub fn mouse_set_destination(
         if let Some(pos) = window.cursor_position() {
             if let Ok((mut destination, base_translation)) = query.get_single_mut() {
                 destination.0 = pos - base_translation.0;
+                // clamp to floor
+                destination.0.y = destination.0.y.min(490.);
             }
         }
     }
