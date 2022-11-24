@@ -74,7 +74,6 @@ impl<E: Send + Clone> RandomEventProducer<E> {
     pub fn sample(&self, rng: &mut Rng) -> ScheduledEvent<E> {
         let after: f32 = rng.0.sample(self.distribution);
         let after = after.clamp(0.5, 25.);
-        debug!("Random sampling: spawn after {} seconds", after);
         ScheduledEvent::new(self.event.clone(), Duration::from_secs_f32(after))
     }
 }

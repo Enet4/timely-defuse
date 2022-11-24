@@ -99,11 +99,6 @@ pub fn touch_system_create_squares(
     touches: Res<Touches>,
 ) {
     for touch in touches.iter_just_pressed() {
-        debug!(
-            "just pressed touch with id {:?} at {:?}",
-            touch.id(),
-            touch.position(),
-        );
         spawn_square(&mut commands, &mut meshes, &mut materials, touch.position());
     }
 }
@@ -118,7 +113,6 @@ pub fn mouse_handler(
     let window = windows.get_primary().unwrap();
     if mouse_button_input.just_pressed(MouseButton::Left) {
         if let Some(pos) = window.cursor_position() {
-            debug!("just pressed mouse button at {:?}", pos);
             spawn_square(&mut commands, &mut meshes, &mut materials, pos);
         }
     }
@@ -159,12 +153,6 @@ pub fn touch_set_destination(
     mut query: Query<(&mut GuyDestination, &BaseTranslation)>,
 ) {
     for touch in touches.iter_just_pressed() {
-        debug!(
-            "just pressed touch with id {:?} at {:?}",
-            touch.id(),
-            touch.position(),
-        );
-
         if let Ok((mut destination, base_translation)) = query.get_single_mut() {
             destination.0 = touch.position() - base_translation.0;
         }
@@ -179,7 +167,6 @@ pub fn mouse_set_destination(
     let window = windows.get_primary().unwrap();
     if mouse_button_input.just_pressed(MouseButton::Left) {
         if let Some(pos) = window.cursor_position() {
-            debug!("just pressed mouse button at {:?}", pos);
             if let Ok((mut destination, base_translation)) = query.get_single_mut() {
                 destination.0 = pos - base_translation.0;
             }

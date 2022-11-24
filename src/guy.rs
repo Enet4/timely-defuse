@@ -315,7 +315,6 @@ pub(crate) fn walk_towards(
 
         *guy_state = GuyState::Running;
     } else if *guy_state == GuyState::Running {
-        debug!("Idle");
         *guy_state = GuyState::Idle;
     }
 }
