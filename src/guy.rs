@@ -428,14 +428,14 @@ pub fn take_hit(
         let guy_pos = guy_pos.0;
         let diff_pos: Vec3 = guy_pos - *position;
         let (t, intensity) = match kind {
-            ExplosiveKind::Dynamite => (9_000., 1.25),
-            ExplosiveKind::Bomb => (24_000., 3.),
+            ExplosiveKind::Dynamite => (9_600., 1.25),
+            ExplosiveKind::Bomb => (25_000., 3.),
         };
         if diff_pos.length_squared() < t {
             *guy_state = GuyState::Ouch;
 
             // add pushback effect on guy
-            guy_vel.0 = intensity * diff_pos + Vec3::new(0., 0., 360. * intensity);
+            guy_vel.0 = intensity * diff_pos + Vec3::new(0., 0., 380. * intensity);
             commands.entity(guy).insert(Gravity::default());
 
             // send event (so that it affects score)
@@ -444,7 +444,7 @@ pub fn take_hit(
             // schedule guy recovery
             commands
                 .entity(guy)
-                .insert(GuyRecovery::new(Duration::from_secs_f32(0.8 * intensity)));
+                .insert(GuyRecovery::new(Duration::from_secs_f32(0.86 * intensity)));
         }
     }
 }
