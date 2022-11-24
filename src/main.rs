@@ -45,6 +45,7 @@ fn main() {
                         height: 660.,
                         present_mode: PresentMode::AutoVsync,
                         resizable: false,
+                        title: "Timely Defuse".to_string(),
                         ..default()
                     },
                     ..default()
@@ -133,13 +134,20 @@ fn main() {
                 .with_system(helper::run_scheduled_events::<BombThrownEvent>)
                 .with_system(helper::run_scheduled_events::<CoffeeThrownEvent>)
                 .with_system(helper::run_scheduled_events::<NextWaveEvent>)
-                .with_system(spawner::handle_spawners::<DynamiteThrownEvent>)
-                .with_system(spawner::handle_spawners::<BombThrownEvent>)
-                .with_system(spawner::handle_spawners::<CoffeeThrownEvent>)
+                .with_system(
+                    spawner::handle_spawners::<DynamiteThrownEvent>
+                        .before(waves::detect_wave_finish),
+                )
+                .with_system(
+                    spawner::handle_spawners::<BombThrownEvent>.before(waves::detect_wave_finish),
+                )
+                .with_system(
+                    spawner::handle_spawners::<CoffeeThrownEvent>.before(waves::detect_wave_finish),
+                )
                 .with_system(spawner::throw_bomb)
                 .with_system(spawner::throw_dynamite)
                 .with_system(spawner::throw_coffee)
-                .with_system(waves::detect_wave_finish.before(guy::walk_to_destination))
+                .with_system(waves::detect_wave_finish)
                 .with_system(waves::change_background_per_wave.before(waves::on_next_wave))
                 .with_system(waves::on_next_wave.after(waves::detect_wave_finish))
                 .with_system(ingame::button_system),

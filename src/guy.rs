@@ -315,7 +315,6 @@ pub(crate) fn walk_towards(
 
         *guy_state = GuyState::Running;
     } else if *guy_state == GuyState::Running {
-        debug!("Idle");
         *guy_state = GuyState::Idle;
     }
 }
@@ -423,20 +422,23 @@ pub fn take_hit(
         return
     };
 
+    const BOMB_EXPLOSION_RADIUS: f32 = 164.;
+    const DYNAMITE_EXPLOSION_RADIUS: f32 = 112.;
+
     for event in event_reader.iter() {
         let ExplodedEvent { kind, position } = event;
 
         let guy_pos = guy_pos.0;
         let diff_pos: Vec3 = guy_pos - *position;
-        let (t, intensity) = match kind {
-            ExplosiveKind::Dynamite => (9_000., 1.25),
-            ExplosiveKind::Bomb => (24_000., 3.),
+        let (r, intensity) = match kind {
+            ExplosiveKind::Dynamite => (DYNAMITE_EXPLOSION_RADIUS, 1.8),
+            ExplosiveKind::Bomb => (BOMB_EXPLOSION_RADIUS, 3.6),
         };
-        if diff_pos.length_squared() < t {
+        if diff_pos.length_squared() < r * r {
             *guy_state = GuyState::Ouch;
 
             // add pushback effect on guy
-            guy_vel.0 = intensity * diff_pos + Vec3::new(0., 0., 360. * intensity);
+            guy_vel.0 = intensity * diff_pos + Vec3::new(0., 0., 400. * intensity);
             commands.entity(guy).insert(Gravity::default());
 
             // send event (so that it affects score)
@@ -445,7 +447,7 @@ pub fn take_hit(
             // schedule guy recovery
             commands
                 .entity(guy)
-                .insert(GuyRecovery::new(Duration::from_secs_f32(0.8 * intensity)));
+                .insert(GuyRecovery::new(Duration::from_secs_f32(0.92 * intensity)));
         }
     }
 }

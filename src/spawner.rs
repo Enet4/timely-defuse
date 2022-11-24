@@ -74,7 +74,6 @@ impl<E: Send + Clone> RandomEventProducer<E> {
     pub fn sample(&self, rng: &mut Rng) -> ScheduledEvent<E> {
         let after: f32 = rng.0.sample(self.distribution);
         let after = after.clamp(0.5, 25.);
-        debug!("Random sampling: spawn after {} seconds", after);
         ScheduledEvent::new(self.event.clone(), Duration::from_secs_f32(after))
     }
 }
@@ -188,7 +187,7 @@ fn random_xy_position(rng: &mut Rng) -> Vec2 {
 }
 
 fn random_velocity_variations(rng: &mut Rng) -> Vec3 {
-    let vel_variations_dist = rand_distr::Uniform::new(-2., 2.);
+    let vel_variations_dist = rand_distr::Uniform::new(-12., 12.);
     let vel_x = rng.0.sample(vel_variations_dist);
     let vel_y = rng.0.sample(vel_variations_dist);
     let vel_variations_z_dist = rand_distr::Uniform::new(-20., 0.);

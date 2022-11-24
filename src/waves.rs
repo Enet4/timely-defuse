@@ -13,11 +13,11 @@ use crate::{
     events::{
         BombThrownEvent, CoffeeThrownEvent, DynamiteThrownEvent, NextWaveEvent, WaveFinishedEvent,
     },
-    guy::GuyState,
+    guy::{GuyDestination, GuyState},
     helper::ScheduledEvent,
     ingame::{Wave, WaveUi},
     menu::NORMAL_BUTTON,
-    movement::{SpatialPosition, Velocity},
+    movement::{SpatialPosition, SpatialVelocity},
     scores::{spawn_stats, GameScores},
     spawner::{PendingThrow, RandomEventProducer, Spawner, SpawnerCooldown},
     DefaultFont,
@@ -88,11 +88,11 @@ pub fn spawn_wave_3(mut commands: Commands) {
 
 pub fn spawn_wave_4(mut commands: Commands) {
     commands.spawn((
-        Spawner::new_essential(8),
-        RandomEventProducer::new(0.5, DynamiteThrownEvent),
+        Spawner::new_essential(12),
+        RandomEventProducer::new(0.4, DynamiteThrownEvent),
     ));
     commands.spawn((
-        Spawner::new_essential(5),
+        Spawner::new_essential(6),
         RandomEventProducer::new(0.08, BombThrownEvent),
     ));
     commands.spawn((
@@ -103,8 +103,8 @@ pub fn spawn_wave_4(mut commands: Commands) {
 
 pub fn spawn_wave_5(mut commands: Commands) {
     commands.spawn((
-        Spawner::new_essential(20),
-        RandomEventProducer::new(0.3, DynamiteThrownEvent),
+        Spawner::new_essential(25),
+        RandomEventProducer::new(0.32, DynamiteThrownEvent),
     ));
     commands.spawn((
         Spawner::new_essential(8),
@@ -118,12 +118,12 @@ pub fn spawn_wave_5(mut commands: Commands) {
 
 pub fn spawn_wave_6(mut commands: Commands) {
     commands.spawn((
-        Spawner::new_essential(40),
-        RandomEventProducer::new(0.6, DynamiteThrownEvent),
+        Spawner::new_essential(60),
+        RandomEventProducer::new(0.62, DynamiteThrownEvent),
     ));
     commands.spawn((
         Spawner::new_essential(16),
-        RandomEventProducer::new(0.11, BombThrownEvent),
+        RandomEventProducer::new(0.12, BombThrownEvent),
     ));
     commands.spawn((
         Spawner::new_nonessential(7),
@@ -184,7 +184,7 @@ pub fn on_next_wave(
     font: Res<DefaultFont>,
     mut event_reader: EventReader<NextWaveEvent>,
     mut query_wave_ui: Query<&mut Text, With<WaveUi>>,
-    query_guy: Query<(&mut GuyState, &mut Velocity)>,
+    query_guy: Query<(Entity, &mut GuyState, &mut SpatialVelocity)>,
     query_wave_finished: Query<Entity, With<WaveFinished>>,
 ) {
     if let Some(_) = event_reader.iter().next() {
@@ -218,19 +218,24 @@ fn spawn_game_over(
     commands: &mut Commands,
     scores: Res<GameScores>,
     font: Res<DefaultFont>,
-    mut query_guy: Query<(&mut GuyState, &mut Velocity)>,
+    mut query_guy: Query<(Entity, &mut GuyState, &mut SpatialVelocity)>,
 ) {
-    if let Ok((mut guy_state, mut guy_velocity)) = query_guy.get_single_mut() {
-        guy_velocity.0 = Vec2::new(0., 0.);
+    if let Ok((guy_entity, mut guy_state, mut guy_velocity)) = query_guy.get_single_mut() {
         match scores.score {
-            -99_999..=99 => {
+            -999_999..=199 => {
                 *guy_state = GuyState::Ouch;
             }
-            100..=99_999 => {
+            200..=999_999 => {
                 *guy_state = GuyState::Victorious;
             }
-            _ => { /* no-op */ }
+            _ => {
+                /* no-op */
+                warn!("... What!?");
+            }
         }
+        // stop moving
+        guy_velocity.0 = Vec3::new(0., 0., 0.);
+        commands.entity(guy_entity).remove::<GuyDestination>();
     }
 
     // spawn container for all stats ui
