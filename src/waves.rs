@@ -13,11 +13,11 @@ use crate::{
     events::{
         BombThrownEvent, CoffeeThrownEvent, DynamiteThrownEvent, NextWaveEvent, WaveFinishedEvent,
     },
-    guy::GuyState,
+    guy::{GuyDestination, GuyState},
     helper::ScheduledEvent,
     ingame::{Wave, WaveUi},
     menu::NORMAL_BUTTON,
-    movement::{SpatialPosition, Velocity},
+    movement::{SpatialPosition, SpatialVelocity},
     scores::{spawn_stats, GameScores},
     spawner::{PendingThrow, RandomEventProducer, Spawner, SpawnerCooldown},
     DefaultFont,
@@ -184,7 +184,7 @@ pub fn on_next_wave(
     font: Res<DefaultFont>,
     mut event_reader: EventReader<NextWaveEvent>,
     mut query_wave_ui: Query<&mut Text, With<WaveUi>>,
-    query_guy: Query<(&mut GuyState, &mut Velocity)>,
+    query_guy: Query<(Entity, &mut GuyState, &mut SpatialVelocity)>,
     query_wave_finished: Query<Entity, With<WaveFinished>>,
 ) {
     if let Some(_) = event_reader.iter().next() {
@@ -218,10 +218,9 @@ fn spawn_game_over(
     commands: &mut Commands,
     scores: Res<GameScores>,
     font: Res<DefaultFont>,
-    mut query_guy: Query<(&mut GuyState, &mut Velocity)>,
+    mut query_guy: Query<(Entity, &mut GuyState, &mut SpatialVelocity)>,
 ) {
-    if let Ok((mut guy_state, mut guy_velocity)) = query_guy.get_single_mut() {
-        guy_velocity.0 = Vec2::new(0., 0.);
+    if let Ok((guy_entity, mut guy_state, mut guy_velocity)) = query_guy.get_single_mut() {
         match scores.score {
             -99_999..=99 => {
                 *guy_state = GuyState::Ouch;
@@ -231,6 +230,10 @@ fn spawn_game_over(
             }
             _ => { /* no-op */ }
         }
+        }
+        // stop moving
+        guy_velocity.0 = Vec3::new(0., 0., 0.);
+        commands.entity(guy_entity).remove::<GuyDestination>();
     }
 
     // spawn container for all stats ui
