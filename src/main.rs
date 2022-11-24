@@ -45,6 +45,7 @@ fn main() {
                         height: 660.,
                         present_mode: PresentMode::AutoVsync,
                         resizable: false,
+                        title: "Timely Defuse".to_string(),
                         ..default()
                     },
                     ..default()
