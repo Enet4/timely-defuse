@@ -1,6 +1,6 @@
 [package]
 name = "timely-defuse"
-version = "0.1.1"
+version = "0.1.2"
 authors = ["Eduardo Pinho <enet4mikeenet@gmail.com>"]
 edition = "2021"
 
