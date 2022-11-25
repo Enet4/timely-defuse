@@ -222,10 +222,10 @@ fn spawn_game_over(
 ) {
     if let Ok((guy_entity, mut guy_state, mut guy_velocity)) = query_guy.get_single_mut() {
         match scores.score {
-            -999_999..=199 => {
+            -999_999..=249 => {
                 *guy_state = GuyState::Ouch;
             }
-            200..=999_999 => {
+            250..=999_999 => {
                 *guy_state = GuyState::Victorious;
             }
             _ => {
