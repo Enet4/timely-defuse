@@ -44,12 +44,13 @@ pub fn on_bomb_explode(
 ) {
     for ev in event_reader.iter() {
         if ev.kind == ExplosiveKind::Bomb {
-            scores.score -= 2;
+            scores.score -= 3;
             update_score(&scores, &mut query);
         }
     }
 }
 
+/// system: if guy gets hurt from an explosion, lose points
 pub fn on_guy_hurt(
     mut scores: ResMut<GameScores>,
     mut event_reader: EventReader<GuyHurtEvent>,
@@ -57,7 +58,7 @@ pub fn on_guy_hurt(
 ) {
     for ev in event_reader.iter() {
         scores.score -= match ev.from {
-            ExplosiveKind::Bomb => 3,
+            ExplosiveKind::Bomb => 5,
             ExplosiveKind::Dynamite => 1,
         };
         update_score(&scores, &mut query);
