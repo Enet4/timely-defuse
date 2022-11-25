@@ -7,6 +7,7 @@ use bevy::{prelude::*, time::Stopwatch};
 pub struct GameScores {
     pub dynamites_disarmed: u32,
     pub bombs_disarmed: u32,
+    pub blasts_taken: u32,
     pub score: i32,
 }
 
@@ -61,6 +62,7 @@ pub fn on_guy_hurt(
             ExplosiveKind::Bomb => 5,
             ExplosiveKind::Dynamite => 1,
         };
+        scores.blasts_taken += 1;
         update_score(&scores, &mut query);
     }
 }
@@ -145,6 +147,10 @@ pub struct BombsScoreUi;
 #[derive(Default, Component)]
 pub struct DynamitesScoreUi;
 
+/// marker component for the number of blasts taken
+#[derive(Default, Component)]
+pub struct BlastsScoreUi;
+
 /// marker component for the total score
 #[derive(Default, Component)]
 pub struct TotalScoreUi;
@@ -198,6 +204,13 @@ pub fn spawn_stats(commands: &mut ChildBuilder, font: Handle<Font>) -> Entity {
                                 color: Color::WHITE,
                             },
                         ),
+                        style: Style {
+                            margin: UiRect {
+                                bottom: Val::Px(6.),
+                                ..default()
+                            },
+                            ..default()
+                        },
                         ..default()
                     });
                     p.spawn(TextBundle {
@@ -209,6 +222,31 @@ pub fn spawn_stats(commands: &mut ChildBuilder, font: Handle<Font>) -> Entity {
                                 color: Color::WHITE,
                             },
                         ),
+                        style: Style {
+                            margin: UiRect {
+                                bottom: Val::Px(6.),
+                                ..default()
+                            },
+                            ..default()
+                        },
+                        ..default()
+                    });
+                    p.spawn(TextBundle {
+                        text: Text::from_section(
+                            "Blasts taken:",
+                            TextStyle {
+                                font: font.clone(),
+                                font_size: 24.,
+                                color: Color::WHITE,
+                            },
+                        ),
+                        style: Style {
+                            margin: UiRect {
+                                bottom: Val::Px(6.),
+                                ..default()
+                            },
+                            ..default()
+                        },
                         ..default()
                     });
                     p.spawn(TextBundle {
@@ -256,6 +294,13 @@ pub fn spawn_stats(commands: &mut ChildBuilder, font: Handle<Font>) -> Entity {
                                     color: Color::WHITE,
                                 },
                             ),
+                            style: Style {
+                                margin: UiRect {
+                                    bottom: Val::Px(6.),
+                                    ..default()
+                                },
+                                ..default()
+                            },
                             ..default()
                         },
                         BombsScoreUi,
@@ -270,9 +315,37 @@ pub fn spawn_stats(commands: &mut ChildBuilder, font: Handle<Font>) -> Entity {
                                     color: Color::WHITE,
                                 },
                             ),
+                            style: Style {
+                                margin: UiRect {
+                                    bottom: Val::Px(6.),
+                                    ..default()
+                                },
+                                ..default()
+                            },
                             ..default()
                         },
                         DynamitesScoreUi,
+                    ));
+                    p.spawn((
+                        TextBundle {
+                            text: Text::from_section(
+                                " ",
+                                TextStyle {
+                                    font: font.clone(),
+                                    font_size: 24.,
+                                    color: Color::WHITE,
+                                },
+                            ),
+                            style: Style {
+                                margin: UiRect {
+                                    bottom: Val::Px(6.),
+                                    ..default()
+                                },
+                                ..default()
+                            },
+                            ..default()
+                        },
+                        BlastsScoreUi,
                     ));
                     p.spawn((
                         TextBundle {
@@ -308,6 +381,7 @@ pub fn update_stats(
     mut query: ParamSet<(
         Query<&mut Text, With<BombsScoreUi>>,
         Query<&mut Text, With<DynamitesScoreUi>>,
+        Query<&mut Text, With<BlastsScoreUi>>,
         Query<&mut Text, With<TotalScoreUi>>,
     )>,
 ) {
@@ -350,6 +424,20 @@ pub fn update_stats(
 
     for mut text in &mut query.p2() {
         let base_time_to_appear = 1.3;
+        if elapsed < base_time_to_appear {
+            break;
+        }
+
+        // value interpolation to the target score
+        let score = scores.blasts_taken;
+        let interval = 0.6;
+        let value =
+            (score as f32 * (((elapsed - base_time_to_appear) / interval).min(1.))).round() as i32;
+        text.sections[0].value = value.to_string();
+    }
+
+    for mut text in &mut query.p3() {
+        let base_time_to_appear = 1.95;
         if elapsed < base_time_to_appear {
             break;
         }
