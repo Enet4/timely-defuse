@@ -118,8 +118,8 @@ pub fn spawn_wave_5(mut commands: Commands) {
 
 pub fn spawn_wave_6(mut commands: Commands) {
     commands.spawn((
-        Spawner::new_essential(60),
-        RandomEventProducer::new(0.62, DynamiteThrownEvent),
+        Spawner::new_essential(64),
+        RandomEventProducer::new(0.6, DynamiteThrownEvent),
     ));
     commands.spawn((
         Spawner::new_essential(16),
@@ -127,7 +127,7 @@ pub fn spawn_wave_6(mut commands: Commands) {
     ));
     commands.spawn((
         Spawner::new_nonessential(7),
-        RandomEventProducer::new(0.08, CoffeeThrownEvent),
+        RandomEventProducer::new(0.075, CoffeeThrownEvent),
     ));
 }
 
