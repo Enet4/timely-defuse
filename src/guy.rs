@@ -481,7 +481,9 @@ pub fn recover(
     for (entity, mut guy_state, mut guy_recovery, mut velocity) in &mut query {
         guy_recovery.0.tick(time.delta());
         if guy_recovery.0.just_finished() {
-            *guy_state = GuyState::Idle;
+            if *guy_state == GuyState::Ouch {
+                *guy_state = GuyState::Idle;
+            }
             velocity.0 = Vec3::new(0., 0., 0.);
             commands
                 .entity(entity)
