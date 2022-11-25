@@ -106,8 +106,6 @@ fn main() {
                 .with_system(movement::apply_boundaries.after(movement::apply_velocity))
                 .with_system(helper::destroy_on_ttl)
                 .with_system(helper::z_depth)
-                .with_system(helper::delayed_insertion::<ToggleVisibility>)
-                .with_system(helper::delayed_removal::<ToggleVisibility>)
                 .with_system(progress_bar::update_progress_bar)
                 .with_system(progress_bar::clear_progress_bar)
                 .with_system(guy::animate_guy)
@@ -152,9 +150,12 @@ fn main() {
                 .with_system(waves::on_next_wave.after(waves::detect_wave_finish))
                 .with_system(ingame::button_system),
         )
-        .add_system_to_stage(
+        .add_system_set_to_stage(
             CoreStage::PostUpdate,
-            animation::detect_toggle_visibility_removal,
+            SystemSet::new()
+                .with_system(animation::detect_toggle_visibility_removal)
+                .with_system(helper::delayed_insertion::<ToggleVisibility>)
+                .with_system(helper::delayed_removal::<ToggleVisibility>),
         )
         .add_system_set(
             SystemSet::on_enter(AppState::InGame)
