@@ -48,6 +48,8 @@ pub enum GuyState {
     Ouch,
     /// yay
     Victorious,
+    /// boo
+    Loser,
 }
 
 pub const GUY_BASE_SPEED: f32 = 150.;
@@ -250,7 +252,7 @@ pub fn animate_guy(
                     }
                 }
             }
-            GuyState::Ouch => {
+            GuyState::Ouch | GuyState::Loser => {
                 timer.ouch_timer.tick(time.delta());
                 if sprite.index < GUY_SPRITESHEET_OUCH_INDEX_START
                     || sprite.index > GUY_SPRITESHEET_OUCH_INDEX_START + 1
@@ -344,7 +346,9 @@ pub fn disarming_bomb(
     };
 
     match *guy_state {
-        GuyState::Running | GuyState::Ouch | GuyState::Victorious => { /* no-op */ }
+        GuyState::Running | GuyState::Ouch | GuyState::Victorious | GuyState::Loser => {
+            /* no-op */
+        }
         GuyState::Idle => {
             let guy_pos = guy_position.truncate() + guy_base_translation.0;
             // look for bombs
