@@ -350,13 +350,13 @@ pub fn disarming_bomb(
             /* no-op */
         }
         GuyState::Idle => {
-            let guy_pos = guy_position.truncate() + guy_base_translation.0;
+            let guy_pos = guy_position.0 + guy_base_translation.0.extend(0.);
             // look for bombs
             let nearest_bomb = query_bombs
                 .iter()
                 .filter(|(_, _, _, state, _)| **state == BombState::Idle)
                 .map(|(entity, bomb_pos, bomb_base_translation, _, _)| {
-                    let bomb_pos = bomb_pos.truncate() - bomb_base_translation.0;
+                    let bomb_pos = bomb_pos.0 - bomb_base_translation.0.extend(0.);
                     let distance_sqr = guy_pos.distance_squared(bomb_pos);
                     (entity, bomb_pos, distance_sqr)
                 })
@@ -364,7 +364,7 @@ pub fn disarming_bomb(
                 .min_by(|(_, _, dist1), (_, _, dist2)| dist1.total_cmp(dist2));
 
             if let Some((bomb_entity, bomb_pos, dist_sqr)) = nearest_bomb {
-                if dist_sqr < 4. {
+                if dist_sqr < 5. {
                     // start disarming!
                     *guy_state = GuyState::Disarming {
                         bomb_entity,
@@ -373,7 +373,7 @@ pub fn disarming_bomb(
                     // TODO(audio) play sound effect
                 }
                 // not enough, but close. set destination
-                guy_destination.0 = bomb_pos - guy_base_translation.0;
+                guy_destination.0 = bomb_pos.truncate() - guy_base_translation.0;
             }
         }
         GuyState::Disarming {
