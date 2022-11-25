@@ -126,6 +126,6 @@ pub fn reset_background(
 
     // reset background translation
     for (_e, mut transform) in &mut query_background {
-        transform.translation.x = 2.;
+        transform.translation.x = 0.;
     }
 }
