@@ -150,14 +150,14 @@ fn main() {
                 .with_system(waves::detect_wave_finish)
                 .with_system(waves::change_background_per_wave.before(waves::on_next_wave))
                 .with_system(waves::on_next_wave.after(waves::detect_wave_finish))
-                .with_system(ingame::button_system),
+                .with_system(ingame::button_system)
+                .with_system(helper::delayed_removal::<ToggleVisibility>),
         )
         .add_system_set_to_stage(
             CoreStage::PostUpdate,
             SystemSet::new()
                 .with_system(animation::detect_toggle_visibility_removal)
-                .with_system(helper::delayed_insertion::<ToggleVisibility>)
-                .with_system(helper::delayed_removal::<ToggleVisibility>),
+                .with_system(helper::delayed_insertion::<ToggleVisibility>),
         )
         .add_system_set(
             SystemSet::on_enter(AppState::InGame)
