@@ -135,6 +135,20 @@ pub fn spawn_wave_6(mut commands: Commands) {
 #[derive(Component)]
 pub struct WaveFinished;
 
+/// An update tick counter for the wave detection check.
+/// A silly cheap trick to reduce the amount of checks.
+#[derive(Debug, Default)]
+pub struct TickCounter(u32);
+
+impl TickCounter {
+    const TICKS_TO_TRIGGER: u32 = 16;
+
+    fn tick(&mut self) -> bool {
+        self.0 = (self.0 + 1) % Self::TICKS_TO_TRIGGER;
+        self.0 == Self::TICKS_TO_TRIGGER - 1
+    }
+}
+
 /// system: grab existing spawners, see if they're done
 pub fn detect_wave_finish(
     mut commands: Commands,
@@ -145,35 +159,59 @@ pub fn detect_wave_finish(
     query_active_entities: Query<(), (With<SpatialPosition>, Without<GuyState>)>,
     // find all spawners
     mut query_spawners: Query<(Entity, &Spawner, Option<&SpawnerCooldown>)>,
+    mut query_wave_ui: Query<&mut Text, With<WaveUi>>,
     mut event_writer: EventWriter<WaveFinishedEvent>,
+    mut ticks: Local<TickCounter>,
 ) {
+    if !ticks.tick() {
+        return;
+    }
+
     // no pending throws
     let c1 = query_throws.is_empty();
+    if !c1 {
+        return;
+    }
+
     // no active entities but guy
     let c2 = query_active_entities.is_empty();
+    if !c2 {
+        return;
+    }
+
     // spawners are down to 0 and not cooling down
     let c3 = query_spawners
         .iter_mut()
         .all(|(_, spawner, cooldown)| cooldown.is_none() && spawner.remaining == 0);
+    if !c3 {
+        return;
+    }
+
     // if wave is already finished, we don't want to repeat this
     let c4 = query_wave_finished.is_empty();
-
-    if c1 && c2 && c3 && c4 {
-        info!("Wave finished");
-        // emit end of wave event
-        event_writer.send(WaveFinishedEvent);
-
-        // remove all spawners
-        for (e, _, _) in &mut query_spawners {
-            commands.entity(e).despawn();
-        }
-
-        // schedule for next wave
-        commands.spawn((
-            ScheduledEvent::new(NextWaveEvent, Duration::from_secs(2)),
-            WaveFinished,
-        ));
+    if !c4 {
+        return;
     }
+
+    info!("Wave finished");
+
+    if let Ok(mut wave_ui_text) = query_wave_ui.get_single_mut() {
+        wave_ui_text.sections[0].value += "\nCOMPLETE";
+    }
+
+    // emit end of wave event
+    event_writer.send(WaveFinishedEvent);
+
+    // remove all spawners
+    for (e, _, _) in &mut query_spawners {
+        commands.entity(e).despawn();
+    }
+
+    // schedule for next wave
+    commands.spawn((
+        ScheduledEvent::new(NextWaveEvent, Duration::from_secs(2)),
+        WaveFinished,
+    ));
 }
 
 /// system: on next wave event

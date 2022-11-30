@@ -63,7 +63,7 @@ pub fn setup(
                 color: Color::WHITE,
             },
         ) // Set the alignment of the Text
-        .with_text_alignment(TextAlignment::CENTER_LEFT)
+        .with_text_alignment(TextAlignment::TOP_LEFT)
         // Set the style of the TextBundle itself.
         .with_style(Style {
             align_self: AlignSelf::FlexEnd,

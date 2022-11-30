@@ -107,7 +107,9 @@ fn main() {
                 .with_system(helper::destroy_on_ttl)
                 .with_system(helper::z_depth)
                 .with_system(progress_bar::update_progress_bar)
-                .with_system(progress_bar::clear_progress_bar)
+                .with_system(
+                    progress_bar::clear_progress_bar.after(progress_bar::update_progress_bar),
+                )
                 .with_system(guy::animate_guy)
                 .with_system(guy::walk_to_destination)
                 .with_system(guy::recover)
