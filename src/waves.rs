@@ -145,6 +145,7 @@ pub fn detect_wave_finish(
     query_active_entities: Query<(), (With<SpatialPosition>, Without<GuyState>)>,
     // find all spawners
     mut query_spawners: Query<(Entity, &Spawner, Option<&SpawnerCooldown>)>,
+    mut query_wave_ui: Query<&mut Text, With<WaveUi>>,
     mut event_writer: EventWriter<WaveFinishedEvent>,
 ) {
     // no pending throws
@@ -160,6 +161,11 @@ pub fn detect_wave_finish(
 
     if c1 && c2 && c3 && c4 {
         info!("Wave finished");
+
+    if let Ok(mut wave_ui_text) = query_wave_ui.get_single_mut() {
+        wave_ui_text.sections[0].value += "\nCOMPLETE";
+    }
+
         // emit end of wave event
         event_writer.send(WaveFinishedEvent);
 
