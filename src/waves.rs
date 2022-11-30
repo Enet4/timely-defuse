@@ -135,6 +135,20 @@ pub fn spawn_wave_6(mut commands: Commands) {
 #[derive(Component)]
 pub struct WaveFinished;
 
+/// An update tick counter for the wave detection check.
+/// A silly cheap trick to reduce the amount of checks.
+#[derive(Debug, Default)]
+pub struct TickCounter(u32);
+
+impl TickCounter {
+    const TICKS_TO_TRIGGER: u32 = 16;
+
+    fn tick(&mut self) -> bool {
+        self.0 = (self.0 + 1) % Self::TICKS_TO_TRIGGER;
+        self.0 == Self::TICKS_TO_TRIGGER - 1
+    }
+}
+
 /// system: grab existing spawners, see if they're done
 pub fn detect_wave_finish(
     mut commands: Commands,
@@ -147,7 +161,12 @@ pub fn detect_wave_finish(
     mut query_spawners: Query<(Entity, &Spawner, Option<&SpawnerCooldown>)>,
     mut query_wave_ui: Query<&mut Text, With<WaveUi>>,
     mut event_writer: EventWriter<WaveFinishedEvent>,
+    mut ticks: Local<TickCounter>,
 ) {
+    if !ticks.tick() {
+        return;
+    }
+
     // no pending throws
     let c1 = query_throws.is_empty();
     if !c1 {
