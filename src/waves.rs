@@ -150,36 +150,49 @@ pub fn detect_wave_finish(
 ) {
     // no pending throws
     let c1 = query_throws.is_empty();
+    if !c1 {
+        return;
+    }
+
     // no active entities but guy
     let c2 = query_active_entities.is_empty();
+    if !c2 {
+        return;
+    }
+
     // spawners are down to 0 and not cooling down
     let c3 = query_spawners
         .iter_mut()
         .all(|(_, spawner, cooldown)| cooldown.is_none() && spawner.remaining == 0);
+    if !c3 {
+        return;
+    }
+
     // if wave is already finished, we don't want to repeat this
     let c4 = query_wave_finished.is_empty();
+    if !c4 {
+        return;
+    }
 
-    if c1 && c2 && c3 && c4 {
-        info!("Wave finished");
+    info!("Wave finished");
 
     if let Ok(mut wave_ui_text) = query_wave_ui.get_single_mut() {
         wave_ui_text.sections[0].value += "\nCOMPLETE";
     }
 
-        // emit end of wave event
-        event_writer.send(WaveFinishedEvent);
+    // emit end of wave event
+    event_writer.send(WaveFinishedEvent);
 
-        // remove all spawners
-        for (e, _, _) in &mut query_spawners {
-            commands.entity(e).despawn();
-        }
-
-        // schedule for next wave
-        commands.spawn((
-            ScheduledEvent::new(NextWaveEvent, Duration::from_secs(2)),
-            WaveFinished,
-        ));
+    // remove all spawners
+    for (e, _, _) in &mut query_spawners {
+        commands.entity(e).despawn();
     }
+
+    // schedule for next wave
+    commands.spawn((
+        ScheduledEvent::new(NextWaveEvent, Duration::from_secs(2)),
+        WaveFinished,
+    ));
 }
 
 /// system: on next wave event
