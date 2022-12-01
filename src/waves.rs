@@ -18,7 +18,7 @@ use crate::{
     ingame::{Wave, WaveUi},
     menu::NORMAL_BUTTON,
     movement::{SpatialPosition, SpatialVelocity},
-    scores::{spawn_stats, GameScores},
+    scores::{spawn_stats, GameScores, RemarkUi},
     spawner::{PendingThrow, RandomEventProducer, Spawner, SpawnerCooldown},
     DefaultFont,
 };
@@ -296,6 +296,29 @@ fn spawn_game_over(
         .with_children(|mut parent| {
             // spawn game stats thingy
             spawn_stats(&mut parent, font.0.clone());
+
+            // spawn remark
+            parent
+                .spawn(TextBundle {
+                    text: Text::from_section(
+                        "",
+                        TextStyle {
+                            font: font.0.clone(),
+                            font_size: 24.,
+                            color: Color::rgb(1., 1., 0.5),
+                        },
+                    ),
+                    style: Style {
+                        margin: UiRect {
+                            top: Val::Px(8.),
+                            bottom: Val::Px(16.),
+                            ..default()
+                        },
+                        ..default()
+                    },
+                    ..default()
+                })
+                .insert(RemarkUi);
 
             // spawn main menu button
             parent

@@ -155,6 +155,10 @@ pub struct BlastsScoreUi;
 #[derive(Default, Component)]
 pub struct TotalScoreUi;
 
+/// a funny remark below the total score
+#[derive(Default, Component)]
+pub struct RemarkUi;
+
 pub fn spawn_stats(commands: &mut ChildBuilder, font: Handle<Font>) -> Entity {
     commands
         .spawn(StatsBundle {
@@ -383,6 +387,7 @@ pub fn update_stats(
         Query<&mut Text, With<DynamitesScoreUi>>,
         Query<&mut Text, With<BlastsScoreUi>>,
         Query<&mut Text, With<TotalScoreUi>>,
+        Query<&mut Text, With<RemarkUi>>,
     )>,
 ) {
     // update stopwatch and fetch time elapsed
@@ -448,5 +453,36 @@ pub fn update_stats(
         let value =
             (score as f32 * (((elapsed - base_time_to_appear) / interval).min(1.))).round() as i32;
         text.sections[0].value = value.to_string();
+    }
+
+    for mut text in &mut query.p4() {
+        let base_time_to_appear = 3.125;
+        if elapsed < base_time_to_appear {
+            break;
+        }
+
+        // if not yet set
+        if text.sections[0].value.is_empty() {
+            if scores.score >= 512 {
+                text.sections[0].style.color = Color::GREEN;
+                text.sections[0].value = "LUDICROUS SCORE!".to_string();
+            } else if scores.score >= 400 {
+                text.sections[0].style.color = Color::rgb(0.4, 1., 0.2);
+                text.sections[0].value = "Awesome score!".to_string();
+            } else if scores.dynamites_disarmed == 0 {
+                text.sections[0].style.color = Color::rgb(0.82, 0.72, 0.28);
+                text.sections[0].value = "Psst. Grab the dynamites!".to_string();
+            } else if scores.score <= 50 {
+                text.sections[0].value = "Better luck next time!".to_string();
+            } else if scores.score <= -100 {
+                text.sections[0].style.color = Color::TOMATO;
+                text.sections[0].value = "...Seriously?".to_string();
+            } else if scores.blasts_taken == 0 {
+                text.sections[0].style.color = Color::rgb(0.8, 0.8, 0.8);
+                text.sections[0].value = "Can't touch this fella!".to_string();
+            } else {
+                text.sections[0].value = "\0".to_string();
+            }
+        }
     }
 }
