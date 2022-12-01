@@ -1,5 +1,8 @@
 # Timely Defuse
 
+[![Timely Defuse on itch.io](https://user-images.githubusercontent.com/4738426/205147102-2ec69591-10bc-4f9d-9d4c-3211bcb09582.png)](https://e-net4.itch.io/timely-defuse)
+
+
 Timely Defuse is a Web-based arcadey game written in Rust.
 
 > On an eventful Sunday morning,
