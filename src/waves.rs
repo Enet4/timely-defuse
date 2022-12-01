@@ -47,22 +47,26 @@ pub fn spawn_wave_0(mut commands: Commands) {
 
 pub fn spawn_wave_1(mut commands: Commands) {
     commands.spawn((
-        Spawner::new_essential(9),
+        Spawner::new_essential(10),
         RandomEventProducer::new(0.42, DynamiteThrownEvent),
     ));
     commands.spawn((
-        Spawner::new_essential(1),
-        RandomEventProducer::new(0.08, BombThrownEvent),
+        ScheduledEvent::new(BombThrownEvent, Duration::from_millis(16_000)),
+        PendingThrow,
     ));
 }
 
 pub fn spawn_wave_2(mut commands: Commands) {
     commands.spawn((
-        Spawner::new_essential(14),
+        Spawner::new_essential(18),
         RandomEventProducer::new(0.45, DynamiteThrownEvent),
     ));
     commands.spawn((
-        ScheduledEvent::new(BombThrownEvent, Duration::from_millis(10_000)),
+        ScheduledEvent::new(BombThrownEvent, Duration::from_millis(12_000)),
+        PendingThrow,
+    ));
+    commands.spawn((
+        ScheduledEvent::new(BombThrownEvent, Duration::from_millis(24_000)),
         PendingThrow,
     ));
     commands.spawn((
@@ -73,16 +77,16 @@ pub fn spawn_wave_2(mut commands: Commands) {
 
 pub fn spawn_wave_3(mut commands: Commands) {
     commands.spawn((
-        Spawner::new_essential(16),
+        Spawner::new_essential(22),
         RandomEventProducer::new(0.5, DynamiteThrownEvent),
     ));
     commands.spawn((
-        Spawner::new_essential(2),
-        RandomEventProducer::new(0.1, BombThrownEvent),
+        Spawner::new_essential(3),
+        RandomEventProducer::new(0.08, BombThrownEvent),
     ));
     commands.spawn((
-        Spawner::new_nonessential(1),
-        RandomEventProducer::new(0.05, CoffeeThrownEvent),
+        Spawner::new_nonessential(2),
+        RandomEventProducer::new(0.055, CoffeeThrownEvent),
     ));
 }
 
@@ -93,22 +97,22 @@ pub fn spawn_wave_4(mut commands: Commands) {
     ));
     commands.spawn((
         Spawner::new_essential(6),
-        RandomEventProducer::new(0.08, BombThrownEvent),
+        RandomEventProducer::new(0.09, BombThrownEvent),
     ));
     commands.spawn((
         Spawner::new_nonessential(2),
-        RandomEventProducer::new(0.05, CoffeeThrownEvent),
+        RandomEventProducer::new(0.06, CoffeeThrownEvent),
     ));
 }
 
 pub fn spawn_wave_5(mut commands: Commands) {
     commands.spawn((
-        Spawner::new_essential(25),
-        RandomEventProducer::new(0.32, DynamiteThrownEvent),
+        Spawner::new_essential(26),
+        RandomEventProducer::new(0.3, DynamiteThrownEvent),
     ));
     commands.spawn((
-        Spawner::new_essential(8),
-        RandomEventProducer::new(0.075, BombThrownEvent),
+        Spawner::new_essential(16),
+        RandomEventProducer::new(0.1, BombThrownEvent),
     ));
     commands.spawn((
         Spawner::new_nonessential(4),
@@ -118,15 +122,15 @@ pub fn spawn_wave_5(mut commands: Commands) {
 
 pub fn spawn_wave_6(mut commands: Commands) {
     commands.spawn((
-        Spawner::new_essential(64),
-        RandomEventProducer::new(0.6, DynamiteThrownEvent),
+        Spawner::new_essential(96),
+        RandomEventProducer::new(0.62, DynamiteThrownEvent),
     ));
     commands.spawn((
-        Spawner::new_essential(16),
-        RandomEventProducer::new(0.12, BombThrownEvent),
+        Spawner::new_essential(24),
+        RandomEventProducer::new(0.125, BombThrownEvent),
     ));
     commands.spawn((
-        Spawner::new_nonessential(7),
+        Spawner::new_nonessential(8),
         RandomEventProducer::new(0.075, CoffeeThrownEvent),
     ));
 }

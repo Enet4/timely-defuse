@@ -468,7 +468,7 @@ pub fn update_stats(
                 text.sections[0].value = "LUDICROUS SCORE!".to_string();
             } else if scores.score >= 400 {
                 text.sections[0].style.color = Color::rgb(0.4, 1., 0.2);
-                text.sections[0].value = "Awesome score!".to_string();
+                text.sections[0].value = "Great score!".to_string();
             } else if scores.dynamites_disarmed == 0 {
                 text.sections[0].style.color = Color::rgb(0.82, 0.72, 0.28);
                 text.sections[0].value = "Psst. Grab the dynamites!".to_string();
