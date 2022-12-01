@@ -112,7 +112,7 @@ pub fn spawn_wave_5(mut commands: Commands) {
     ));
     commands.spawn((
         Spawner::new_essential(16),
-        RandomEventProducer::new(0.1, BombThrownEvent),
+        RandomEventProducer::new(0.12, BombThrownEvent),
     ));
     commands.spawn((
         Spawner::new_nonessential(4),
@@ -123,11 +123,11 @@ pub fn spawn_wave_5(mut commands: Commands) {
 pub fn spawn_wave_6(mut commands: Commands) {
     commands.spawn((
         Spawner::new_essential(96),
-        RandomEventProducer::new(0.62, DynamiteThrownEvent),
+        RandomEventProducer::new(0.64, DynamiteThrownEvent),
     ));
     commands.spawn((
         Spawner::new_essential(24),
-        RandomEventProducer::new(0.125, BombThrownEvent),
+        RandomEventProducer::new(0.14, BombThrownEvent),
     ));
     commands.spawn((
         Spawner::new_nonessential(8),
