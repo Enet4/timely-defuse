@@ -3,7 +3,7 @@
 use bevy::{prelude::*, sprite::MaterialMesh2dBundle};
 
 use crate::{
-    events::{BombDisarmedEvent, DisarmCancelledEvent, DisarmProgressEvent, ExplodedEvent},
+    events::{BombDisarmedEvent, DisarmCancelledEvent, DisarmProgressEvent, GuyHurtEvent},
     helper::Fixed,
 };
 
@@ -93,24 +93,19 @@ pub fn update_progress_bar(
 pub fn clear_progress_bar(
     mut disarmed_event_reader: EventReader<BombDisarmedEvent>,
     mut cancelled_event_reader: EventReader<DisarmCancelledEvent>,
-    mut exploded_event_reader: EventReader<ExplodedEvent>,
+    mut guy_hurt_event_reader: EventReader<GuyHurtEvent>,
     mut query: Query<&mut Visibility, With<ProgressBarOuterMesh>>,
 ) {
-    for BombDisarmedEvent(_) in disarmed_event_reader.iter() {
-        if let Ok(mut visibility) = query.get_single_mut() {
-            visibility.is_visible = false;
-        }
-    }
+    let event_chain = disarmed_event_reader
+        .iter()
+        .map(|_| ())
+        .chain(cancelled_event_reader.iter().map(|_| ()))
+        .chain(guy_hurt_event_reader.iter().map(|_| ()));
 
-    for DisarmCancelledEvent(_) in cancelled_event_reader.iter() {
+    for _ in event_chain {
         if let Ok(mut visibility) = query.get_single_mut() {
             visibility.is_visible = false;
-        }
-    }
-
-    for _ in exploded_event_reader.iter() {
-        if let Ok(mut visibility) = query.get_single_mut() {
-            visibility.is_visible = false;
+            break;
         }
     }
 }
